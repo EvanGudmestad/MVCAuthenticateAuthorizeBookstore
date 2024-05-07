@@ -8,6 +8,18 @@ namespace Bookstore.Models.ViewModels
         [StringLength(255)]
         public string Username { get; set; } = null!;
 
+        [Required(ErrorMessage ="Please enter a first name.")]
+        [StringLength(255)]
+        public string FirstName { get; set; } = null!;
+
+        [Required(ErrorMessage = "Please enter a first name.")]
+        [StringLength(255)]
+        public string LastName { get; set; } = null!;
+
+        [Required(ErrorMessage = "Please enter an email address")]
+        [EmailAddress]
+        public string Email { get; set; } = null!;
+
         [Required(ErrorMessage = "Please enter a password")]
         [DataType(DataType.Password)]
         [Compare("ConfirmPassword")]

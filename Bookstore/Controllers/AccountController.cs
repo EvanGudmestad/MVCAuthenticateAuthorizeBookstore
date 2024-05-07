@@ -34,7 +34,7 @@ namespace Bookstore.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new User { UserName = model.Username };
+                var user = new User { UserName = model.Username, Email = model.Email, FirstName = model.FirstName, LastName = model.LastName };
                 var result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -92,5 +92,44 @@ namespace Bookstore.Controllers
         }
 
         public ViewResult AccessDenied() => View();
+
+        [HttpGet]
+        public IActionResult ChangePassword()
+        {
+            var model = new ChangePasswordViewModel
+            {
+                Username = User.Identity?.Name ?? ""
+            };
+
+            return View(model);
+
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                User user = await userManager.FindByNameAsync(model.Username);
+                if (user != null)
+                {
+                    var result = await userManager.ChangePasswordAsync(user, model.OldPassword, model.NewPassword);
+                    if (result.Succeeded)
+                    {
+                        TempData["message"] = "Password changed successfully.";
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        foreach (var error in result.Errors)
+                        {
+                            ModelState.AddModelError("", error.Description);
+                        }
+                    }
+                }
+            }
+            return View(model);
+        }
+        
     }
 }
